@@ -55,6 +55,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<TabKey>('home');
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [registered, setRegistered] = useState(false);
+  const [hasAccessedGroup, setHasAccessedGroup] = useState(false);
   const [form, setForm] = useState<RegisterForm>(initialForm);
 
   const headerTitle = useMemo(() => {
@@ -111,7 +112,12 @@ function App() {
             />
           )}
           {activeTab === 'services' && <ServicesScreen />}
-          {activeTab === 'group' && <GroupScreen />}
+          {activeTab === 'group' && (
+            <GroupScreen 
+              hasAccessed={hasAccessedGroup || registered} 
+              onAccess={() => setHasAccessedGroup(true)} 
+            />
+          )}
         </ScrollView>
 
         <View style={styles.bottomNav}>
@@ -146,21 +152,36 @@ function App() {
 }
 
 function LoginScreen({ onLogin }: { onLogin: () => void }) {
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const isLogin = mode === 'login';
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.authContainer}>
         <View style={styles.authHeader}>
           <View style={styles.authLogo}>
-            <Ionicons name="lock-closed" size={32} color={colors.accent} />
+            <Ionicons name={isLogin ? "lock-closed" : "person-add"} size={32} color={colors.accent} />
           </View>
-          <Text style={styles.authTitle}>Secure Login</Text>
-          <Text style={styles.authSubtitle}>Access your IkiminaPass account</Text>
+          <Text style={styles.authTitle}>{isLogin ? 'Secure Login' : 'Create Account'}</Text>
+          <Text style={styles.authSubtitle}>
+            {isLogin ? 'Access your IkiminaPass account' : 'Join thousands of saving groups today'}
+          </Text>
         </View>
 
         <View style={styles.authForm}>
+          {!isLogin && (
+            <InputRow
+              label="Full Name"
+              value={name}
+              onChangeText={setName}
+              placeholder="e.g. John Doe"
+            />
+          )}
           <InputRow
             label="Email or Phone"
             value={email}
@@ -173,19 +194,33 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
             onChangeText={setPassword}
             placeholder="••••••••"
           />
+          {!isLogin && (
+            <InputRow
+              label="Confirm Password"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              placeholder="••••••••"
+            />
+          )}
           
-          <Pressable style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-          </Pressable>
+          {isLogin && (
+            <Pressable style={styles.forgotPassword}>
+              <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+            </Pressable>
+          )}
 
           <Pressable style={styles.primaryButton} onPress={onLogin}>
-            <Text style={styles.primaryButtonText}>Log In</Text>
+            <Text style={styles.primaryButtonText}>{isLogin ? 'Log In' : 'Sign Up'}</Text>
           </Pressable>
 
           <View style={styles.authFooter}>
-            <Text style={styles.authFooterText}>Don't have an account? </Text>
-            <Pressable>
-              <Text style={styles.authFooterLink}>Create Account</Text>
+            <Text style={styles.authFooterText}>
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
+            </Text>
+            <Pressable onPress={() => setMode(isLogin ? 'signup' : 'login')}>
+              <Text style={styles.authFooterLink}>
+                {isLogin ? 'Create Account' : 'Log In'}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -327,7 +362,54 @@ function ServicesScreen() {
   );
 }
 
-function GroupScreen() {
+function GroupScreen({ 
+  hasAccessed, 
+  onAccess 
+}: { 
+  hasAccessed: boolean; 
+  onAccess: () => void; 
+}) {
+  const [groupName, setGroupName] = useState('');
+  const [groupCode, setGroupCode] = useState('');
+
+  if (!hasAccessed) {
+    return (
+      <View style={styles.screen}>
+        <View style={styles.welcomeHero}>
+          <Text style={styles.heroTitle}>Access Group</Text>
+          <Text style={styles.heroSubtitle}>Enter your group details to view records.</Text>
+        </View>
+
+        <View style={styles.formContainer}>
+          <InputRow
+            label="Group Name"
+            value={groupName}
+            onChangeText={setGroupName}
+            placeholder="e.g. Kigali Savings Group"
+          />
+          <InputRow
+            label="Group Access Code"
+            value={groupCode}
+            onChangeText={setGroupCode}
+            placeholder="Enter 6-digit code"
+          />
+          
+          <Pressable style={styles.primaryButton} onPress={onAccess}>
+            <Text style={styles.primaryButtonText}>Access Group Dashboard</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Security Note</Text>
+          <View style={styles.highlightItem}>
+            <Ionicons name="shield-outline" size={20} color={colors.muted} />
+            <Text style={styles.highlightText}>Access codes are provided by your group treasurer.</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   const maxAmount = Math.max(...groupChart.map((item) => item.amount));
 
   return (
