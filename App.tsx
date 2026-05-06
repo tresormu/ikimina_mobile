@@ -51,6 +51,7 @@ const initialForm: RegisterForm = {
 };
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>('home');
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [registered, setRegistered] = useState(false);
@@ -75,15 +76,24 @@ function App() {
     setActiveTab('group');
   };
 
+  if (!isLoggedIn) {
+    return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="dark" />
       <View style={styles.appShell}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>{headerTitle}</Text>
-          <Pressable style={styles.profileButton}>
-            <Ionicons name="person-outline" size={24} color={colors.primary} />
-          </Pressable>
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <Pressable style={styles.profileButton}>
+              <Ionicons name="person-outline" size={24} color={colors.primary} />
+            </Pressable>
+            <Pressable style={styles.profileButton} onPress={() => setIsLoggedIn(false)}>
+              <Ionicons name="log-out-outline" size={24} color={colors.error} />
+            </Pressable>
+          </View>
         </View>
 
         <ScrollView
@@ -129,6 +139,55 @@ function App() {
               </Pressable>
             );
           })}
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+function LoginScreen({ onLogin }: { onLogin: () => void }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.authContainer}>
+        <View style={styles.authHeader}>
+          <View style={styles.authLogo}>
+            <Ionicons name="lock-closed" size={32} color={colors.accent} />
+          </View>
+          <Text style={styles.authTitle}>Secure Login</Text>
+          <Text style={styles.authSubtitle}>Access your IkiminaPass account</Text>
+        </View>
+
+        <View style={styles.authForm}>
+          <InputRow
+            label="Email or Phone"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Enter your email"
+          />
+          <InputRow
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="••••••••"
+          />
+          
+          <Pressable style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+          </Pressable>
+
+          <Pressable style={styles.primaryButton} onPress={onLogin}>
+            <Text style={styles.primaryButtonText}>Log In</Text>
+          </Pressable>
+
+          <View style={styles.authFooter}>
+            <Text style={styles.authFooterText}>Don't have an account? </Text>
+            <Pressable>
+              <Text style={styles.authFooterLink}>Create Account</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -668,6 +727,61 @@ const styles = StyleSheet.create({
   },
   navLabelActive: {
     color: colors.accent,
+  },
+  // Auth Styles
+  authContainer: {
+    flex: 1,
+    padding: 30,
+    justifyContent: 'center',
+    backgroundColor: '#FFF',
+  },
+  authHeader: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  authLogo: {
+    width: 64,
+    height: 64,
+    borderWidth: 2,
+    borderColor: colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  authTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.primary,
+    marginBottom: 8,
+  },
+  authSubtitle: {
+    fontSize: 15,
+    color: colors.muted,
+  },
+  authForm: {
+    gap: 20,
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+  },
+  forgotPasswordText: {
+    fontSize: 14,
+    color: colors.accent,
+    fontWeight: '600',
+  },
+  authFooter: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  authFooterText: {
+    fontSize: 14,
+    color: colors.muted,
+  },
+  authFooterLink: {
+    fontSize: 14,
+    color: colors.accent,
+    fontWeight: '700',
   },
 });
 
