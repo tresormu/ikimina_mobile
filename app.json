@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "IkiminaPass",
+    "slug": "ikimina-pass-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "description": "Mobile-first Expo app inspired by the IkiminaPass web experience.",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    }
+  }
+}
