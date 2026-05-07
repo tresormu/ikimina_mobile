@@ -33,7 +33,7 @@ export const NotificationsScreen = () => {
 };
 
 const NotificationItem = ({ item }: { item: typeof mockNotifications[0] }) => (
-  <TouchableOpacity style={[styles.item, !item.isRead && styles.unreadItem]}>
+  <TouchableOpacity style={[styles.item, !item.isRead ? styles.unreadItem : null]}>
     <View style={[styles.iconContainer, { backgroundColor: getIconColor(item.type) + '15' }]}>
       <Ionicons name={getIcon(item.type) as any} size={22} color={getIconColor(item.type)} />
     </View>

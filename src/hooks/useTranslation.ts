@@ -9,8 +9,9 @@ const listeners: Set<(lang: Language) => void> = new Set();
 export const useTranslation = () => {
   const [lang, setLang] = useState<Language>(currentLanguage);
 
-  const t = useCallback((key: keyof typeof translations.en) => {
-    return translations[lang][key] || key;
+  const t = useCallback((key: keyof typeof translations.en): string => {
+    const value = translations[lang][key] || key;
+    return String(value);
   }, [lang]);
 
   const changeLanguage = useCallback((newLang: Language) => {

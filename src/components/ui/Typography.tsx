@@ -98,11 +98,11 @@ export const Typography: React.FC<TypographyProps> = ({
     <Text 
       style={[
         getVariantStyle(), 
-        { textAlign: align },
-        color ? { color } : {}, 
-        style
+        { textAlign: align as any },
+        color ? { color: String(color) } : null, 
+        style as any
       ]}
-      numberOfLines={numberOfLines}
+      numberOfLines={typeof numberOfLines === 'number' ? numberOfLines : undefined}
     >
       {children}
     </Text>

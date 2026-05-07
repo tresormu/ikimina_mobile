@@ -1,51 +1,54 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Share, Alert } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Share,
+  Alert
+} from 'react-native';
+import { Layout } from '../../components/shared/Layout';
 import { Typography } from '../../components/ui/Typography';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { colors, spacing, radius, shadow, palette } from '../../design/tokens';
+import { colors, spacing, radius, shadow } from '../../design/tokens';
 import { Ionicons } from '@expo/vector-icons';
 import { mockUser, creditBreakdown } from '../../data/mockData';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const CreditPassportScreen = () => {
-  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<'score' | 'history' | 'share'>('score');
 
   const handleShareLink = async () => {
     try {
-      await Share.share({
+      const result = await Share.share({
         message: `Check my Ikimina Credit Passport: https://ikiminapass.com/verify/${mockUser.id}?token=abc123xyz (Valid for 24h)`,
       });
-    } catch {
+      return result;
+    } catch (error) {
       Alert.alert('Error sharing link');
     }
   };
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: colors.bg }}
-      contentContainerStyle={{ paddingBottom: spacing['6xl'] }}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Score Hero */}
-      <View style={[styles.header, { paddingTop: insets.top + spacing.xl }]}>
+    <Layout scrollable padding={false}>
+      {/* Header */}
+      <View style={styles.header}>
         <View style={styles.scoreBadge}>
           <Typography variant="h1" color={colors.primary}>{mockUser.creditScore}</Typography>
           <Typography variant="body" style={{ fontWeight: '700' }}>{mockUser.creditCategory}</Typography>
         </View>
         <Typography variant="bodySmall" color={colors.textSecondary} align="center" style={{ marginTop: spacing.sm }}>
-          Your score increased by 12 points since last month 🎉
+          Your score has increased by 12 points since last month!
         </Typography>
       </View>
 
       {/* Tabs */}
       <View style={styles.tabContainer}>
-        {(['score', 'history', 'share'] as const).map((tab) => (
+        {['score', 'history', 'share'].map((tab) => (
           <TouchableOpacity
             key={tab}
-            style={[styles.tab, activeTab === tab && styles.activeTab]}
-            onPress={() => setActiveTab(tab)}
+            style={[styles.tab, activeTab === tab ? styles.activeTab : null]}
+            onPress={() => setActiveTab(tab as any)}
           >
             <Typography
               variant="bodySmall"
@@ -59,7 +62,6 @@ export const CreditPassportScreen = () => {
       </View>
 
       <View style={styles.content}>
-        {/* ── Score Tab ── */}
         {activeTab === 'score' && (
           <>
             <Typography variant="h3" style={styles.sectionTitle}>Score Breakdown</Typography>
@@ -71,7 +73,12 @@ export const CreditPassportScreen = () => {
                     <Typography variant="bodySmall" color={colors.textSecondary}>{item.value}/{item.max}</Typography>
                   </View>
                   <View style={styles.progressBarContainer}>
-                    <View style={[styles.progressBar, { width: `${(item.value / item.max) * 100}%`, backgroundColor: item.color }]} />
+                    <View
+                      style={[
+                        styles.progressBar,
+                        { width: `${(item.value / item.max) * 100}%`, backgroundColor: item.color }
+                      ]}
+                    />
                   </View>
                 </View>
               ))}
@@ -79,26 +86,24 @@ export const CreditPassportScreen = () => {
 
             <Typography variant="h3" style={[styles.sectionTitle, { marginTop: spacing['2xl'] }]}>How to improve</Typography>
             <Card variant="outline" padding="lg">
-              <TipItem icon="time-outline"    text="Maintain a 100% on-time contribution rate for the next 3 months." />
-              <TipItem icon="people-outline"  text="Encourage your group members to maintain high collective health." />
-              <TipItem icon="wallet-outline"  text="Repay your active loan ahead of the scheduled due date." isLast />
+              <TipItem icon="time-outline" text="Maintain a 100% on-time contribution rate for the next 3 months." />
+              <TipItem icon="people-outline" text="Encourage your group members to maintain high collective health." />
+              <TipItem icon="wallet-outline" text="Repay your active loan ahead of the scheduled due date." isLast />
             </Card>
           </>
         )}
 
-        {/* ── History Tab ── */}
         {activeTab === 'history' && (
-          <>
+          <View>
             <Typography variant="h3" style={styles.sectionTitle}>6-Month Trend</Typography>
             <Card variant="flat" padding="xl" style={styles.graphCard}>
               <View style={styles.graphContainer}>
                 {[680, 695, 710, 705, 730, 742].map((val, i) => (
                   <View key={i} style={styles.graphColumn}>
-                    <Typography variant="caption" color={colors.textSecondary} style={{ marginBottom: 4 }}>{val}</Typography>
                     <View
                       style={[
                         styles.graphBar,
-                        { height: (val / 850) * 140, backgroundColor: i === 5 ? colors.primary : colors.primaryLight },
+                        { height: `${(val / 850) * 100}%`, backgroundColor: i === 5 ? colors.primary : colors.primaryLight }
                       ]}
                     />
                     <Typography variant="caption" color={colors.textMuted} style={{ marginTop: 8 }}>
@@ -108,12 +113,11 @@ export const CreditPassportScreen = () => {
                 ))}
               </View>
             </Card>
-          </>
+          </View>
         )}
 
-        {/* ── Share Tab ── */}
         {activeTab === 'share' && (
-          <>
+          <View>
             <Typography variant="h3" style={styles.sectionTitle}>Share Credit Passport</Typography>
             <Typography variant="bodySmall" color={colors.textSecondary} style={{ marginBottom: spacing.xl }}>
               Generate a secure link to share your credit history with lenders or partners.
@@ -129,27 +133,20 @@ export const CreditPassportScreen = () => {
               </Typography>
               <View style={styles.shareActions}>
                 <Button label="Copy Link" variant="outline" size="sm" onPress={handleShareLink} style={{ flex: 1, marginRight: 8 }} />
-                <Button
-                  label="Revoke"
-                  variant="outline"
-                  size="sm"
-                  onPress={() => Alert.alert('Revoked', 'The link has been deactivated.')}
-                  labelStyle={{ color: colors.danger }}
-                  style={{ flex: 1, borderColor: colors.danger }}
-                />
+                <Button label="Revoke" variant="outline" size="sm" onPress={() => Alert.alert('Revoked', 'The link has been deactivated.')} labelStyle={{ color: colors.danger }} style={{ flex: 1 }} />
               </View>
             </Card>
 
-            <Button label="Generate New Link" onPress={handleShareLink} style={{ marginTop: spacing.xl }} icon="add-circle-outline" />
-          </>
+            <Button label="Generate New Link" onPress={handleShareLink} style={{ marginTop: spacing.xl }} />
+          </View>
         )}
       </View>
-    </ScrollView>
+    </Layout>
   );
 };
 
-const TipItem = ({ icon, text, isLast }: { icon: string; text: string; isLast?: boolean }) => (
-  <View style={[styles.tipItem, !isLast && styles.tipBorder]}>
+const TipItem = ({ icon, text, isLast }: { icon: string, text: string, isLast?: boolean }) => (
+  <View style={[styles.tipItem, !isLast ? styles.tipBorder : null]}>
     <View style={styles.tipIcon}>
       <Ionicons name={icon as any} size={20} color={colors.primary} />
     </View>
@@ -171,13 +168,13 @@ const styles = StyleSheet.create({
     borderColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: palette.white,
+    backgroundColor: colors.surface,
     ...shadow.md,
   },
   tabContainer: {
     flexDirection: 'row',
     paddingHorizontal: spacing.xl,
-    backgroundColor: palette.white,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
@@ -237,7 +234,8 @@ const styles = StyleSheet.create({
     marginRight: spacing.md,
   },
   graphCard: {
-    height: 220,
+    height: 240,
+    justifyContent: 'flex-end',
   },
   graphContainer: {
     flexDirection: 'row',
@@ -256,6 +254,7 @@ const styles = StyleSheet.create({
   },
   shareCard: {
     alignItems: 'center',
+    backgroundColor: colors.surface,
   },
   shareActions: {
     flexDirection: 'row',

@@ -14,7 +14,7 @@ export default function App() {
     <SafeAreaProvider>
       <GroupProvider>
         <NavigationContainer>
-          <StatusBar style="dark" />
+          {/* <StatusBar style="dark" /> */}
           <RootNavigator />
         </NavigationContainer>
       </GroupProvider>

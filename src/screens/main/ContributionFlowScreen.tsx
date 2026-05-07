@@ -55,13 +55,13 @@ export const ContributionFlowScreen = () => {
     <Layout padding={false}>
       {/* Step Indicator */}
       <View style={styles.stepper}>
-        <View style={[styles.stepDot, step === 'verify' && styles.activeStep]} />
+        <View style={[styles.stepDot, step === 'verify' ? styles.activeStep : null]} />
         <View style={styles.stepLine} />
-        <View style={[styles.stepDot, step === 'pay' && styles.activeStep]} />
+        <View style={[styles.stepDot, step === 'pay' ? styles.activeStep : null]} />
         <View style={styles.stepLine} />
-        <View style={[styles.stepDot, step === 'confirm' && styles.activeStep]} />
+        <View style={[styles.stepDot, step === 'confirm' ? styles.activeStep : null]} />
         <View style={styles.stepLine} />
-        <View style={[styles.stepDot, step === 'success' && styles.activeStep]} />
+        <View style={[styles.stepDot, step === 'success' ? styles.activeStep : null]} />
       </View>
 
       <View style={styles.container}>

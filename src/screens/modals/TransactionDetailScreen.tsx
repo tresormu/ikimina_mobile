@@ -98,7 +98,7 @@ export const TransactionDetailScreen = () => {
 const DetailRow = ({
   label, value, valueColor, isLast,
 }: { label: string; value: string; valueColor?: string; isLast?: boolean }) => (
-  <View style={[styles.detailRow, !isLast && styles.detailBorder]}>
+  <View style={[styles.detailRow, !isLast ? styles.detailBorder : null]}>
     <Typography variant="bodySmall" color={colors.textSecondary}>{label}</Typography>
     <Typography variant="body" color={valueColor ?? colors.textPrimary} style={{ fontWeight: '600', maxWidth: '60%', textAlign: 'right' }}>
       {value}

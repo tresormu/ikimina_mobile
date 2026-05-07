@@ -96,7 +96,7 @@ export const LoanRequestScreen = () => {
           {LOAN_PURPOSES.map((p) => (
             <TouchableOpacity
               key={p}
-              style={[styles.purposeChip, selectedPurpose === p && styles.purposeChipActive]}
+              style={[styles.purposeChip, selectedPurpose === p ? styles.purposeChipActive : null]}
               onPress={() => setSelectedPurpose(p)}
             >
               <Typography

@@ -32,7 +32,7 @@ export const NotificationSettingsScreen = () => {
 
       <Card variant="outline" padding="md">
         {SETTINGS.map((item, i) => (
-          <View key={item.key} style={[styles.row, i < SETTINGS.length - 1 && styles.rowBorder]}>
+          <View key={item.key} style={[styles.row, i < SETTINGS.length - 1 ? styles.rowBorder : null]}>
             <View style={{ flex: 1, marginRight: spacing.md }}>
               <Typography variant="body" style={{ fontWeight: '600' }}>{item.label}</Typography>
               <Typography variant="caption" color={colors.textMuted}>{item.desc}</Typography>

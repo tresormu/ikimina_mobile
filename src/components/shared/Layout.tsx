@@ -27,7 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({
       paddingTop: insets.top,
       paddingBottom: insets.bottom,
     },
-    padding && { paddingHorizontal: spacing.xl },
+    padding ? { paddingHorizontal: spacing.xl } : {},
     style,
   ];
 

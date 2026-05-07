@@ -50,7 +50,7 @@ export const GroupScreen = () => {
           {groups.map((g) => (
             <TouchableOpacity
               key={g.id}
-              style={[styles.switcherItem, g.id === activeGroup.id && styles.switcherItemActive]}
+              style={[styles.switcherItem, g.id === activeGroup.id ? styles.switcherItemActive : null]}
               onPress={() => { switchGroup(g.id); setShowSwitcher(false); }}
             >
               <View style={[styles.switcherDot, { backgroundColor: g.id === activeGroup.id ? colors.primary : colors.border }]} />
@@ -91,7 +91,7 @@ export const GroupScreen = () => {
         {(['members', 'rotation', 'rules'] as Tab[]).map((tab) => (
           <TouchableOpacity
             key={tab}
-            style={[styles.tab, activeTab === tab && styles.activeTab]}
+            style={[styles.tab, activeTab === tab ? styles.activeTab : null]}
             onPress={() => setActiveTab(tab)}
           >
             <Typography
@@ -131,7 +131,7 @@ export const GroupScreen = () => {
           data={activeGroup.rules}
           keyExtractor={(_, i) => i.toString()}
           renderItem={({ item, index }) => (
-            <View style={[styles.ruleItem, index < activeGroup.rules.length - 1 && styles.ruleBorder]}>
+            <View style={[styles.ruleItem, index < activeGroup.rules.length - 1 ? styles.ruleBorder : null]}>
               <View style={styles.ruleNumber}>
                 <Typography variant="caption" color={palette.white} style={{ fontWeight: '700' }}>{index + 1}</Typography>
               </View>
@@ -157,7 +157,7 @@ const MemberItem = ({ member }: { member: typeof mockMembers[0] }) => {
   const statusColor = member.status === 'paid' ? colors.success : member.status === 'missed' ? colors.danger : colors.warning;
   const statusBg    = member.status === 'paid' ? colors.successLight : member.status === 'missed' ? colors.dangerLight : colors.warningLight;
   return (
-    <View style={[styles.listItem, member.isMe && styles.highlightItem]}>
+    <View style={[styles.listItem, member.isMe ? styles.highlightItem : null]}>
       <View style={styles.avatar}>
         <Typography variant="body" color={colors.primary} style={{ fontWeight: '700' }}>{member.name[0]}</Typography>
       </View>
@@ -184,7 +184,7 @@ const MemberItem = ({ member }: { member: typeof mockMembers[0] }) => {
 };
 
 const RotationItem = ({ item }: { item: typeof rotationSchedule[0] }) => (
-  <View style={[styles.listItem, item.isMe && styles.highlightItem]}>
+  <View style={[styles.listItem, item.isMe ? styles.highlightItem : null]}>
     <View style={[styles.weekBadge, { backgroundColor: item.received ? colors.successLight : item.isMe ? colors.primaryLight : colors.surfaceAlt }]}>
       <Typography variant="caption" color={item.received ? colors.success : item.isMe ? colors.primary : colors.textMuted} style={{ fontWeight: '700' }}>
         W{item.week}

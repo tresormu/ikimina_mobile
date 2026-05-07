@@ -113,7 +113,7 @@ export const LoansScreen = () => {
             {activeLoan.repaymentSchedule.map((entry, i) => (
               <View
                 key={i}
-                style={[styles.scheduleRow, i < activeLoan.repaymentSchedule!.length - 1 && styles.scheduleBorder]}
+                style={[styles.scheduleRow, i < activeLoan.repaymentSchedule!.length - 1 ? styles.scheduleBorder : null]}
               >
                 <View style={[styles.scheduleIcon, { backgroundColor: entry.paid ? colors.successLight : colors.warningLight }]}>
                   <Ionicons
@@ -193,7 +193,7 @@ export const LoansScreen = () => {
             { icon: 'checkmark-circle', color: colors.success, text: 'Good payment history ✓' },
             { icon: 'information-circle', color: colors.info,  text: 'Maximum loan: RWF 500,000' },
           ].map((item, i) => (
-            <View key={i} style={[styles.eligibilityItem, i < 2 && styles.eligibilityBorder]}>
+            <View key={i} style={[styles.eligibilityItem, i < 2 ? styles.eligibilityBorder : null]}>
               <Ionicons name={item.icon as any} size={22} color={item.color} />
               <Typography variant="body" style={{ marginLeft: spacing.md }}>{item.text}</Typography>
             </View>

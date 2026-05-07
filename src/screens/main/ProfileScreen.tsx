@@ -97,7 +97,7 @@ export const ProfileScreen = () => {
           {groups.map((g, i) => (
             <TouchableOpacity
               key={g.id}
-              style={[styles.groupRow, i < groups.length - 1 && styles.groupRowBorder]}
+              style={[styles.groupRow, i < groups.length - 1 ? styles.groupRowBorder : null]}
               onPress={() => switchGroup(g.id)}
             >
               <View style={[styles.groupDot, { backgroundColor: g.id === activeGroup.id ? colors.primary : colors.border }]} />
@@ -123,7 +123,7 @@ export const ProfileScreen = () => {
             {(['en', 'rw'] as const).map((l) => (
               <TouchableOpacity
                 key={l}
-                style={[styles.langBtn, lang === l && styles.langBtnActive]}
+                style={[styles.langBtn, lang === l ? styles.langBtnActive : null]}
                 onPress={() => changeLanguage(l)}
               >
                 <Typography
@@ -246,7 +246,7 @@ const SettingRow = ({
   onPress?: () => void; isLast?: boolean; danger?: boolean;
 }) => (
   <TouchableOpacity
-    style={[styles.settingRow, !isLast && styles.settingBorder]}
+    style={[styles.settingRow, !isLast ? styles.settingBorder : null]}
     onPress={onPress}
     disabled={!onPress && !right}
     activeOpacity={0.7}

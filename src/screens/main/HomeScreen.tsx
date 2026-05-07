@@ -76,9 +76,9 @@ export const HomeScreen = () => {
               <Typography variant="bodySmall" style={{ marginLeft: spacing.sm, flex: 1 }}>
                 {t('myTurn')}{' '}
                 <Typography variant="bodySmall" color={colors.primary} style={{ fontWeight: '700' }}>
-                  {weeksUntilMyTurn} {t('weeks')}
+                  {String(weeksUntilMyTurn)} {t('weeks')}
                 </Typography>
-                {' '}· Pot: RWF {(group.potAmount ?? 0).toLocaleString()}
+                {' '}· Pot: RWF {String((group.potAmount ?? 0).toLocaleString())}
               </Typography>
             </View>
           </View>
@@ -97,7 +97,7 @@ export const HomeScreen = () => {
           <Typography variant="h3" style={styles.sectionTitle}>Your Credit Health</Typography>
           <Card variant="outline" onPress={() => navigation.navigate('CreditPassport')} style={styles.scoreCard} padding="lg">
             <View style={styles.scoreInfo}>
-              <Typography variant="h2" color={colors.primary}>{mockUser.creditScore}</Typography>
+              <Typography variant="h2" color={colors.primary}>{String(mockUser.creditScore)}</Typography>
               <Typography variant="bodySmall" color={colors.textSecondary}>Rating: {mockUser.creditCategory}</Typography>
               <View style={styles.scoreBarContainer}>
                 <View style={[styles.scoreBar, { width: `${(mockUser.creditScore / 850) * 100}%` }]} />
@@ -141,7 +141,12 @@ export const HomeScreen = () => {
       </ScrollView>
 
       {/* ── Group Switcher Modal ── */}
-      <Modal visible={switcherVisible} transparent animationType="slide" onRequestClose={() => setSwitcherVisible(false)}>
+      <Modal 
+        visible={!!switcherVisible} 
+        transparent={true} 
+        animationType="slide" 
+        onRequestClose={() => setSwitcherVisible(false)}
+      >
         <Pressable style={styles.modalOverlay} onPress={() => setSwitcherVisible(false)}>
           <View style={styles.modalSheet}>
             <View style={styles.modalHandle} />
@@ -154,7 +159,7 @@ export const HomeScreen = () => {
             {groups.map((g) => (
               <TouchableOpacity
                 key={g.id}
-                style={[styles.groupItem, g.id === group.id && styles.groupItemActive]}
+                style={[styles.groupItem, g.id === group.id ? styles.groupItemActive : null]}
                 onPress={() => { switchGroup(g.id); setSwitcherVisible(false); }}
               >
                 <View style={[styles.groupItemIcon, { backgroundColor: g.id === group.id ? colors.primaryLight : colors.surfaceAlt }]}>
@@ -167,16 +172,16 @@ export const HomeScreen = () => {
                 <View style={{ flex: 1 }}>
                   <Typography variant="body" style={{ fontWeight: '600' }}>{g.name}</Typography>
                   <Typography variant="caption" color={colors.textMuted}>
-                    {g.totalMembers} members · {g.frequency}
+                    {String(g.totalMembers)} members · {g.frequency}
                   </Typography>
                 </View>
-                {g.id === group.id && <Ionicons name="checkmark-circle" size={22} color={colors.primary} />}
+                {g.id === group.id ? <Ionicons name="checkmark-circle" size={22} color={colors.primary} /> : null}
               </TouchableOpacity>
             ))}
             <Button
               label="Join New Group"
               variant="outline"
-              onPress={() => { setSwitcherVisible(false); navigation.navigate('JoinGroup'); }}
+              onPress={() => { setSwitcherVisible(false); navigation.navigate('JoinGroup' as any); }}
               style={{ marginTop: spacing.lg }}
               icon="add-circle-outline"
             />
@@ -204,7 +209,7 @@ const GroupStat = ({ label, value }: { label: string; value: string }) => (
 );
 
 const ActivityItem = ({ item, isLast, onPress }: { item: typeof mockContributions[0]; isLast: boolean; onPress: () => void }) => (
-  <TouchableOpacity style={[styles.activityItem, !isLast && styles.activityBorder]} onPress={onPress} activeOpacity={0.7}>
+  <TouchableOpacity style={[styles.activityItem, isLast ? null : styles.activityBorder]} onPress={onPress} activeOpacity={0.7}>
     <View style={[styles.activityIcon, {
       backgroundColor: item.status === 'paid' ? colors.successLight : item.status === 'missed' ? colors.dangerLight : colors.warningLight,
     }]}>
@@ -215,7 +220,7 @@ const ActivityItem = ({ item, isLast, onPress }: { item: typeof mockContribution
       />
     </View>
     <View style={{ flex: 1 }}>
-      <Typography variant="body" style={{ fontWeight: '500' }}>Contribution — Week {item.weekNumber}</Typography>
+      <Typography variant="body" style={{ fontWeight: '500' }}>Contribution — Week {String(item.weekNumber)}</Typography>
       <Typography variant="caption">{item.submittedAt}</Typography>
     </View>
     <Typography variant="body" style={{ fontWeight: '600' }}>RWF {item.amount.toLocaleString()}</Typography>

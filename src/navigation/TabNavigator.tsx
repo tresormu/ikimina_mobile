@@ -14,7 +14,7 @@ export const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false,
+        headerShown: false as boolean,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
@@ -35,7 +35,7 @@ export const TabNavigator = () => {
           if (route.name === 'Group')   iconName = focused ? 'people'  : 'people-outline';
           if (route.name === 'Loans')   iconName = focused ? 'wallet'  : 'wallet-outline';
           if (route.name === 'Profile') iconName = focused ? 'person'  : 'person-outline';
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName} size={Number(size)} color={color} />;
         },
       })}
     >
