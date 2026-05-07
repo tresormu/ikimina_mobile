@@ -6,13 +6,13 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "description": "Mobile-first Expo app inspired by the IkiminaPass web experience.",
+    "description": "Mobile-first savings group management app.",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ikiminapass.mobile"
     },
     "android": {
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.ikiminapass.mobile"
     }
   }
 }
