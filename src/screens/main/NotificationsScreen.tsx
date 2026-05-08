@@ -44,7 +44,7 @@ const NotificationItem = ({ item }: { item: typeof mockNotifications[0] }) => (
       </View>
       <Typography variant="bodySmall" color={colors.textSecondary} numberOfLines={2}>{item.message}</Typography>
     </View>
-    {!item.isRead && <View style={styles.unreadDot} />}
+    {!item.isRead ? <View style={styles.unreadDot} /> : null}
   </TouchableOpacity>
 );
 

@@ -33,21 +33,21 @@ export const Input: React.FC<InputProps> = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label ? <Text style={styles.label}>{label}</Text> : null}
       
       <View style={[
         styles.inputContainer,
         isFocused ? styles.inputFocused : null,
         error ? styles.inputError : null,
       ]}>
-        {leftIcon && (
+        {leftIcon ? (
           <Ionicons 
             name={leftIcon} 
             size={20} 
             color={error ? colors.danger : (isFocused ? colors.primary : colors.textMuted)} 
             style={styles.leftIcon} 
           />
-        )}
+        ) : null}
         
         <TextInput
           style={styles.input}
@@ -63,7 +63,7 @@ export const Input: React.FC<InputProps> = ({
           {...props}
         />
 
-        {rightIcon && (
+        {rightIcon ? (
           <Ionicons 
             name={rightIcon} 
             size={20} 
@@ -71,10 +71,10 @@ export const Input: React.FC<InputProps> = ({
             style={styles.rightIcon}
             onPress={onRightIconPress}
           />
-        )}
+        ) : null}
       </View>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
 };

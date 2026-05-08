@@ -259,7 +259,7 @@ const SettingRow = ({
     >
       {label}
     </Typography>
-    {right ?? (onPress && <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />)}
+    {right ?? (onPress ? <Ionicons name="chevron-forward" size={18} color={colors.textMuted} /> : null)}
   </TouchableOpacity>
 );
 

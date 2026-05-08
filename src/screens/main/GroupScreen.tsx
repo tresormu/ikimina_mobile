@@ -58,7 +58,7 @@ export const GroupScreen = () => {
                 <Typography variant="body" style={{ fontWeight: g.id === activeGroup.id ? '700' : '400' }}>{g.name}</Typography>
                 <Typography variant="caption" color={colors.textMuted}>{g.totalMembers} members</Typography>
               </View>
-              {g.id === activeGroup.id && <Ionicons name="checkmark" size={18} color={colors.primary} />}
+              {g.id === activeGroup.id ? <Ionicons name="checkmark" size={18} color={colors.primary} /> : null}
             </TouchableOpacity>
           ))}
         </View>

@@ -14,6 +14,7 @@ import { spacing, colors, radius } from '../../design/tokens';
 import { AuthNavigationProp } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useApp } from '../../context/AppContext';
 
 const { width } = Dimensions.get('window');
 
@@ -50,12 +51,26 @@ export const OnboardingScreen = () => {
     }
   }).current;
 
-  const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
+  const viewConfig = useRef({ 
+    viewAreaCoveragePercentThreshold: 20,
+    minimumViewTime: 100 
+  }).current;
+
+  const { showLoading } = useApp();
 
   const scrollTo = () => {
     if (currentIndex < SLIDES.length - 1) {
-      slidesRef.current?.scrollToIndex({ index: currentIndex + 1 });
+      try {
+        slidesRef.current?.scrollToIndex({ 
+          index: currentIndex + 1, 
+          animated: true 
+        });
+      } catch (e) {
+        // Fallback if scrollToIndex fails (e.g. list not ready)
+        setCurrentIndex(prev => prev + 1);
+      }
     } else {
+      showLoading(1000);
       navigation.navigate('Login');
     }
   };
@@ -98,7 +113,7 @@ export const OnboardingScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={{ flex: 3 }}>
+      <View style={{ flex: 1 }}>
         <FlatList
           data={SLIDES}
           renderItem={({ item }) => (
@@ -127,6 +142,11 @@ export const OnboardingScreen = () => {
           onViewableItemsChanged={viewableItemsChanged}
           viewabilityConfig={viewConfig}
           ref={slidesRef}
+          getItemLayout={(_, index) => ({
+            length: width,
+            offset: width * index,
+            index,
+          })}
         />
       </View>
 
@@ -134,7 +154,7 @@ export const OnboardingScreen = () => {
         <Paginator />
         <Button 
           label={currentIndex === SLIDES.length - 1 ? "Get Started" : "Next"} 
-          onPress={scrollTo}
+          onPress={() => scrollTo()}
           style={styles.button}
         />
       </View>

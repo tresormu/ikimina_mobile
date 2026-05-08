@@ -6,18 +6,24 @@ import { StatusBar } from 'expo-status-bar';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { GroupProvider } from './src/context/GroupContext';
 
+import { AppProvider } from './src/context/AppContext';
+import { LoadingOverlay } from './src/components/shared/LoadingOverlay';
+
 // Must be called before any navigation renders
 enableScreens();
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <GroupProvider>
-        <NavigationContainer>
-          {/* <StatusBar style="dark" /> */}
-          <RootNavigator />
-        </NavigationContainer>
-      </GroupProvider>
+      <AppProvider>
+        <GroupProvider>
+          <NavigationContainer>
+            {/* <StatusBar style="dark" /> */}
+            <RootNavigator />
+            <LoadingOverlay />
+          </NavigationContainer>
+        </GroupProvider>
+      </AppProvider>
     </SafeAreaProvider>
   );
 }

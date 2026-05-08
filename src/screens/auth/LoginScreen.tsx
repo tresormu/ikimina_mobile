@@ -14,18 +14,18 @@ import { Button } from '../../components/ui/Button';
 import { spacing, colors } from '../../design/tokens';
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigationProp } from '../../types/navigation';
+import { useApp } from '../../context/AppContext';
 
 export const LoginScreen = () => {
   const navigation = useNavigation<AuthNavigationProp>();
+  const { showLoading } = useApp();
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = () => {
     if (phoneNumber.length < 10) return;
-    setIsLoading(true);
+    showLoading(1500);
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false);
       navigation.navigate('OTPVerify', { phoneNumber });
     }, 1500);
   };
@@ -57,7 +57,6 @@ export const LoginScreen = () => {
             <Button 
               label="Send OTP" 
               onPress={handleLogin}
-              loading={isLoading}
               disabled={phoneNumber.length < 10}
             />
 

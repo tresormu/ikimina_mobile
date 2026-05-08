@@ -12,6 +12,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { AuthNavigationProp, AuthStackParamList } from '../../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../hooks/useAuth';
+import { useApp } from '../../context/AppContext';
 import { mockUser } from '../../data/mockData';
 
 export const OTPVerifyScreen = () => {
@@ -21,7 +22,6 @@ export const OTPVerifyScreen = () => {
   const { login } = useAuth();
 
   const [otp, setOtp] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(59);
 
   useEffect(() => {
@@ -31,13 +31,14 @@ export const OTPVerifyScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const { showLoading } = useApp();
+
   const handleVerify = () => {
     if (otp.length < 4) return;
-    setIsLoading(true);
+    showLoading(2000);
     setTimeout(() => {
-      setIsLoading(false);
       login(mockUser); // sets isAuthenticated = true → RootNavigator shows Main
-    }, 1500);
+    }, 2000);
   };
 
   return (
@@ -75,7 +76,6 @@ export const OTPVerifyScreen = () => {
             <Button
               label="Verify & Continue"
               onPress={handleVerify}
-              loading={isLoading}
               disabled={otp.length < 4}
             />
 

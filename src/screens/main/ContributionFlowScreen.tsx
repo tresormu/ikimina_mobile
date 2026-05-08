@@ -3,7 +3,7 @@ import {
   View, 
   StyleSheet, 
   TouchableOpacity, 
-  TextInput, 
+  ActivityIndicator,
   Linking,
   Alert
 } from 'react-native';
@@ -19,37 +19,42 @@ import { useNavigation } from '@react-navigation/native';
 export const ContributionFlowScreen = () => {
   const { activeGroup: group } = useGroup();
   const navigation = useNavigation();
-  const [step, setStep] = useState<'verify' | 'pay' | 'confirm' | 'success'>('verify');
-  const [transactionId, setTransactionId] = useState('');
+  const [step, setStep] = useState<'verify' | 'pay' | 'processing' | 'success'>('verify');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleMomoRedirect = () => {
-    // In a real app, we would use a deep link or USSD string
-    // For this demo, we simulate it
-    Alert.alert(
-      'MoMo Redirect',
-      `You are being redirected to MTN MoMo to pay RWF ${group.contributionAmount?.toLocaleString()} to ${group.recipientName}.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Paid', onPress: () => setStep('confirm') }
-      ]
-    );
-  };
-
-  const handleUSSD = () => {
-    Linking.openURL('tel:*182*1*1*0788111001*25000#');
-    setStep('confirm');
-  };
-
-  const handleSubmitTransaction = () => {
-    if (!transactionId) return;
-    setIsSubmitting(true);
-    // Simulate backend verification
+  const initiatePayment = (method: 'MTN MoMo' | 'Airtel Money') => {
+    setStep('processing');
+    
+    // Simulate the Payment API triggering a push on the user's phone
     setTimeout(() => {
-      setIsSubmitting(false);
-      setStep('success');
-    }, 2000);
+      // Show simulated native payment confirmation prompt
+      Alert.alert(
+        `${method} Payment`,
+        `Do you want to pay RWF ${group.contributionAmount?.toLocaleString()} to IkiminaPass?`,
+        [
+          { 
+            text: 'Cancel', 
+            style: 'cancel',
+            onPress: () => setStep('pay')
+          },
+          { 
+            text: 'Confirm', 
+            onPress: () => {
+              setIsSubmitting(true);
+              // Simulate backend recording the successful transaction
+              setTimeout(() => {
+                setIsSubmitting(false);
+                setStep('success');
+              }, 2000);
+            } 
+          }
+        ]
+      );
+    }, 1500);
   };
+
+  const handleMomoPayment = () => initiatePayment('MTN MoMo');
+  const handleAirtelPayment = () => initiatePayment('Airtel Money');
 
   return (
     <Layout padding={false}>
@@ -59,7 +64,7 @@ export const ContributionFlowScreen = () => {
         <View style={styles.stepLine} />
         <View style={[styles.stepDot, step === 'pay' ? styles.activeStep : null]} />
         <View style={styles.stepLine} />
-        <View style={[styles.stepDot, step === 'confirm' ? styles.activeStep : null]} />
+        <View style={[styles.stepDot, step === 'processing' ? styles.activeStep : null]} />
         <View style={styles.stepLine} />
         <View style={[styles.stepDot, step === 'success' ? styles.activeStep : null]} />
       </View>
@@ -101,87 +106,86 @@ export const ContributionFlowScreen = () => {
           <View>
             <Typography variant="h2" style={styles.title}>Choose Payment Method</Typography>
             <Typography variant="body" color={colors.textSecondary} style={styles.subtitle}>
-              Complete your payment using MTN MoMo or Airtel Money.
+              The payment will be initiated via a secure push notification on your phone.
             </Typography>
 
-            <TouchableOpacity style={styles.paymentOption} onPress={handleMomoRedirect}>
+            <TouchableOpacity style={styles.paymentOption} onPress={handleMomoPayment}>
               <View style={[styles.paymentIcon, { backgroundColor: '#FFCC00' }]}>
-                <Typography variant="h4" color="#000">MoMo</Typography>
+                <Typography variant="h4" color="#000" style={{ fontWeight: '800' }}>MoMo</Typography>
               </View>
               <View style={{flex: 1}}>
-                <Typography variant="body" style={{fontWeight: '600'}}>Pay via MTN MoMo App</Typography>
-                <Typography variant="caption">Fastest and most secure</Typography>
+                <Typography variant="body" style={{fontWeight: '600'}}>MTN Mobile Money</Typography>
+                <Typography variant="caption">Instant USSD Push Confirmation</Typography>
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.paymentOption} onPress={handleUSSD}>
-              <View style={[styles.paymentIcon, { backgroundColor: colors.surfaceAlt }]}>
-                <Ionicons name="apps-outline" size={24} color={colors.textPrimary} />
+            <TouchableOpacity style={styles.paymentOption} onPress={handleAirtelPayment}>
+              <View style={[styles.paymentIcon, { backgroundColor: '#E11D48' }]}>
+                <Typography variant="h4" color="#FFF" style={{ fontWeight: '800' }}>Airtel</Typography>
               </View>
               <View style={{flex: 1}}>
-                <Typography variant="body" style={{fontWeight: '600'}}>Pay via USSD (*182#)</Typography>
-                <Typography variant="caption">Works without internet</Typography>
+                <Typography variant="body" style={{fontWeight: '600'}}>Airtel Money</Typography>
+                <Typography variant="caption">Instant USSD Push Confirmation</Typography>
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
             </TouchableOpacity>
 
-            <Button 
-              label="I have already paid" 
-              variant="outline"
-              onPress={() => setStep('confirm')} 
-              style={{marginTop: spacing['4xl']}}
-            />
+            <View style={styles.infoBox}>
+              <Ionicons name="information-circle-outline" size={20} color={colors.textSecondary} />
+              <Typography variant="caption" color={colors.textSecondary} style={{ marginLeft: 8, flex: 1 }}>
+                Make sure your phone is nearby to approve the transaction when the prompt appears.
+              </Typography>
+            </View>
           </View>
         )}
 
-        {step === 'confirm' && (
-          <View>
-            <Typography variant="h2" style={styles.title}>Submit Transaction ID</Typography>
-            <Typography variant="body" color={colors.textSecondary} style={styles.subtitle}>
-              Enter the Transaction ID from the SMS confirmation you received.
+        {step === 'processing' && (
+          <View style={styles.processingContainer}>
+            <View style={styles.processingAnimation}>
+              <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+            <Typography variant="h2" align="center" style={styles.title}>Waiting for Confirmation</Typography>
+            <Typography variant="body" align="center" color={colors.textSecondary}>
+              We've sent a payment request to your phone. Please enter your MoMo PIN to authorize the transaction.
             </Typography>
-
-            <View style={styles.inputContainer}>
-              <Typography variant="label" style={{marginBottom: 8}}>Transaction ID / Code</Typography>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g. MOMO-9821-X"
-                value={transactionId}
-                onChangeText={setTransactionId}
-                autoCapitalize="characters"
-              />
+            
+            <View style={styles.timerContainer}>
+              <Typography variant="caption" color={colors.textMuted}>Waiting for response...</Typography>
             </View>
 
             <Button 
-              label="Submit for Verification" 
-              onPress={handleSubmitTransaction} 
-              loading={isSubmitting}
-              disabled={!transactionId}
-              style={{marginTop: spacing.xl}}
+              label="Cancel Request" 
+              variant="outline"
+              onPress={() => setStep('pay')} 
+              style={{marginTop: spacing['4xl'], width: '100%'}}
             />
-            
-            <TouchableOpacity 
-              style={styles.helpLink} 
-              onPress={() => Alert.alert('Help', 'The transaction ID is the unique code found in your MoMo or Airtel confirmation SMS.')}
-            >
-              <Typography variant="bodySmall" color={colors.textSecondary}>Where can I find this?</Typography>
-            </TouchableOpacity>
           </View>
         )}
 
         {step === 'success' && (
           <View style={styles.successContainer}>
             <View style={styles.successIcon}>
-              <Ionicons name="checkmark-circle" size={80} color={colors.success} />
+              <Ionicons name="checkmark-circle" size={100} color={colors.success} />
             </View>
-            <Typography variant="h1" align="center" style={{marginBottom: spacing.md}}>Submission Received</Typography>
+            <Typography variant="h1" align="center" style={{marginBottom: spacing.md}}>Payment Successful!</Typography>
             <Typography variant="body" align="center" color={colors.textSecondary} style={{marginBottom: spacing['2xl']}}>
-              Your payment is being verified by the system. You will receive a notification once it is confirmed.
+              Your contribution of RWF {group.contributionAmount?.toLocaleString()} has been recorded and confirmed.
             </Typography>
             
+            <Card variant="flat" padding="lg" style={{ width: '100%', marginBottom: spacing['3xl'] }}>
+              <View style={styles.successDetailRow}>
+                <Typography variant="caption">Transaction ID</Typography>
+                <Typography variant="bodySmall" style={{ fontWeight: '600' }}>TXN-{Math.random().toString(36).substring(7).toUpperCase()}</Typography>
+              </View>
+              <View style={[styles.successDetailRow, { marginTop: 8 }]}>
+                <Typography variant="caption">Status</Typography>
+                <Typography variant="bodySmall" color={colors.success} style={{ fontWeight: '600' }}>CONFIRMED</Typography>
+              </View>
+            </Card>
+
             <Button 
-              label="Back to Dashboard" 
+              label="Back to Home" 
               onPress={() => navigation.goBack()} 
               style={{width: '100%'}}
             />
@@ -268,28 +272,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: spacing.md,
   },
-  inputContainer: {
+  infoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: radius.md,
     marginTop: spacing.xl,
   },
-  input: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  helpLink: {
+  processingContainer: {
     alignItems: 'center',
+    paddingTop: spacing['4xl'],
+  },
+  processingAnimation: {
+    marginBottom: spacing['2xl'],
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timerContainer: {
     marginTop: spacing.xl,
   },
   successContainer: {
     alignItems: 'center',
-    paddingTop: spacing['4xl'],
+    paddingTop: spacing['2xl'],
   },
   successIcon: {
-    marginBottom: spacing['2xl'],
+    marginBottom: spacing['xl'],
+  },
+  successDetailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });

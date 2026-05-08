@@ -105,13 +105,13 @@ export const Button: React.FC<ButtonProps> = ({
         <ActivityIndicator color={iconColor} size="small" />
       ) : (
         <View style={styles.content}>
-          {icon && iconPosition === 'left' && (
+          {icon && iconPosition === 'left' ? (
             <Ionicons name={icon} size={size === 'sm' ? 16 : 20} color={iconColor} style={styles.leftIcon} />
-          )}
+          ) : null}
           <Text style={[getTextStyle(), labelStyle]}>{label}</Text>
-          {icon && iconPosition === 'right' && (
+          {icon && iconPosition === 'right' ? (
             <Ionicons name={icon} size={size === 'sm' ? 16 : 20} color={iconColor} style={styles.rightIcon} />
-          )}
+          ) : null}
         </View>
       )}
     </TouchableOpacity>

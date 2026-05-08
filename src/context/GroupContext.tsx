@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { MockGroup, mockGroups } from '../data/mockData';
+import { useApp } from './AppContext';
 
 interface GroupContextType {
   activeGroup: MockGroup;
@@ -15,13 +16,13 @@ export const GroupProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [groups, setGroups] = useState<MockGroup[]>(mockGroups);
   const [activeGroup, setActiveGroup] = useState<MockGroup>(mockGroups[0]);
   const [loading, setLoading] = useState(false);
+  const { showLoading } = useApp();
 
   const switchGroup = (groupId: string) => {
-    setLoading(true);
+    showLoading(600);
     setTimeout(() => {
       const group = groups.find((g) => g.id === groupId);
       if (group) setActiveGroup(group);
-      setLoading(false);
     }, 600);
   };
 
